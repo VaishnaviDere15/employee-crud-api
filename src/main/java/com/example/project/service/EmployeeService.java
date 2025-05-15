@@ -45,7 +45,22 @@ public class EmployeeService
 
 	    }
 	    employeeRepository.deleteById(id);
-	}
-
+  }
+   public List<Employee> searchByName(String keyword)
+  {
+  return employeeRepository.searchByName(keyword);
+ }
+  public List<Employee> searchByDepartment(String department)
+  {
+	  return employeeRepository.searchByDepartment(department);
+  }
   
+  public List<Employee> getAllEmployee()
+  {
+	  return employeeRepository.findAll();
+  }
+  public List<Employee> getEmployeeByDepartment(String department)
+  {
+	  return employeeRepository.findByDepartment(department);
+  }
   }

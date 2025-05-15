@@ -15,6 +15,10 @@ public class LoadDatabase
 		return args ->{
 			repository.save(new Employee("Vaishnavi","vaishnavidere08@gmail.com","IT","Developer"));
 			repository.save(new Employee("Pankaj","pankajbk09@gmail.com","HR","Manager"));
+			repository.save(new Employee("John Doe", "Johndoe09@gmail.com","HR","Finance"));
+			repository.save(new Employee("Joanna Smith", "joannaSmith09@gmail.com","Manager","Product Manager"));
+			repository.save(new Employee("Alice Johnson", "alicejohnson@gmail.com" ,"IT" ,"Analyst"));
+			
 		};
 		
 	}
