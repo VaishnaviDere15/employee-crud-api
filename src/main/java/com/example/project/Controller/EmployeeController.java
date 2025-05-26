@@ -4,6 +4,10 @@ import com.example.project.model.Employee;
 import com.example.project.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,11 +18,23 @@ import java.util.Optional;
 
 public class EmployeeController
 {
-	@Autowired
-	private EmployeeService employeeService;
+	
+	private final EmployeeService employeeService;
+	
+	public EmployeeController(EmployeeService employeeService) {
+	this.employeeService = employeeService;
+	}
+	
     @GetMapping
     public List<Employee> getAllEmployees(){
     return employeeService.getAllEmployees();
+    }
+    
+    @GetMapping("/paged")
+    
+    	public Page<Employee> getEmployeesPaged(
+    			@PageableDefault(size = 5,sort= "id") Pageable pageable){
+    	return employeeService.getAllEmployees(pageable);
     }
     
     @GetMapping("/{id}")

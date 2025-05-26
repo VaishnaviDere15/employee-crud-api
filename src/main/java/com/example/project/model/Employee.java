@@ -4,7 +4,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 @Table(name="employees")
@@ -17,14 +22,19 @@ public class Employee
 private  Long id;
 private  String name;
 private  String email;
-private String department;
+
 private String position;
+
+@ManyToOne
+@JsonIgnore
+@JoinColumn(name= "department_id")
+private Department department;
 
 public  Employee()
 {
 }
 
-public Employee(String name,String email,String department,String position)
+public Employee(String name,String email,Department department,String position)
 {
 	this.name=name;
 	this.email=email;
@@ -61,12 +71,12 @@ public void setEmail(String email)
 	this.email=email;
 }
 
-public String getDepartment()
+public Department getDepartment()
 {
 	return department;
 }
 
-public void setDepartment(String department)
+public void setDepartment(Department department)
 {
 	this.department=department;
 }

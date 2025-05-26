@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Employee List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Employee List</h2>
+    
+    <div class="text-end mb-3">
+        <a th:href="@{/view/employees/add}" class="btn btn-success">Add Employee</a>
+    </div>
+
+    <form method="get" th:action="@{/view/employees}" style="margin-bottom: 1rem;">
+        <label for="size">Employees per page:</label>
+        <select name="size" id="size" onchange="this.form.submit()" class="form-select d-inline-block w-auto ms-2">
+            <option th:value="5" th:selected="${size == 5}">5</option>
+            <option th:value="10" th:selected="${size == 10}">10</option>
+            <option th:value="20" th:selected="${size == 20}">20</option>
+            <option th:value="50" th:selected="${size == 50}">50</option>
+        </select>
+       
+        <input type="hidden" name="page" th:value="${currentPage}" />
+    </form>
+    
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Position</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="employee : ${employeePage.content}">
+            <td th:text="${employee.id}"></td>
+            <td th:text="${employee.name}"></td>
+            <td th:text="${employee.email}"></td>
+            <td th:text="${employee.department.name}"></td>
+            <td th:text="${employee.position}"></td>
+            <td>
+				<a th:href="@{'/view/employees/edit/' + ${employee.id}}"
+				   class="btn btn-sm text-dark bg-light border border-secondary">Edit</a>
+
+				<a th:href="@{'/view/employees/delete/' + ${employee.id}}"
+				   class="btn btn-sm text-dark bg-warning-subtle border border-warning"
+				   onclick="return confirm('Are you sure you want to delete this employee?');">Delete</a>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    
+    
+    <nav>
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/view/employees(page=${currentPage - 1}, size=${size})}">Previous</a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">
+                    Page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span>
+                </span>
+            </li>
+            <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
+                <a class="page-link" th:href="@{/view/employees(page=${currentPage + 1}, size=${size})}">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>

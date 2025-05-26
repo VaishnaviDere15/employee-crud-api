@@ -3,17 +3,31 @@ package com.example.project.service;
 import com.example.project.model.Employee;
 import com.example.project.repository.EmployeeRepository;
 import com.example.project.exception.EmployeeNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class EmployeeService
 {
-	@Autowired
- private EmployeeRepository employeeRepository;
+	
+    private final EmployeeRepository employeeRepository;
+    
+   public EmployeeService(EmployeeRepository employeeRepository)
+   {
+	   this.employeeRepository=employeeRepository;
+   }
+    
+   
+
+	public Page<Employee> getAllEmployees(Pageable pageable) {
+	    return employeeRepository.findAll(pageable);
+	}
+   
+
     public List<Employee>getAllEmployees(){
 	return employeeRepository.findAll();
     }
