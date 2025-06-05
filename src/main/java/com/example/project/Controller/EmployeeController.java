@@ -1,112 +1,115 @@
 package com.example.project.controller;
 
+import com.example.project.dtos.EmployeeDTO;
 import com.example.project.model.Employee;
+import com.example.project.projection.EmployeeBasicInfo;
+import com.example.project.service.EmployeeDataService;
 import com.example.project.service.EmployeeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/employees")
+public class EmployeeController {
 
-public class EmployeeController
-{
-	
-	private final EmployeeService employeeService;
-	
-	public EmployeeController(EmployeeService employeeService) {
-	this.employeeService = employeeService;
-	}
-	
+    private final EmployeeService employeeService;
+    private final EmployeeDataService employeeDataService;
+
+    public EmployeeController(EmployeeService employeeService, EmployeeDataService employeeDataService) {
+        this.employeeService = employeeService;
+        this.employeeDataService = employeeDataService;
+    }
+
+   
     @GetMapping
-    public List<Employee> getAllEmployees(){
-    return employeeService.getAllEmployees();
+    public ResponseEntity<List<Employee>> getAllEmployees() {
+        return ResponseEntity.ok(employeeService.getAllEmployees());
     }
-    
+
+   
+    @GetMapping("/dto")
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployeeDTOs() {
+        return ResponseEntity.ok(employeeDataService.getAllEmployees());
+    }
+
+   
     @GetMapping("/paged")
-    
-    	public Page<Employee> getEmployeesPaged(
-    			@PageableDefault(size = 5,sort= "id") Pageable pageable){
-    	return employeeService.getAllEmployees(pageable);
+    public ResponseEntity<Page<Employee>> getEmployeesPaged(
+            @PageableDefault(size = 5, sort = "id") Pageable pageable) {
+        return ResponseEntity.ok(employeeService.getAllEmployees(pageable));
     }
-    
+
+   
     @GetMapping("/{id}")
-    public Employee getEmployeeById(@PathVariable Long id)
-    {
-    	return employeeService.getEmployeeById(id);
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
+        return ResponseEntity.ok(employeeService.getEmployeeById(id));
     }
-    
-    
-    
-    @PostMapping()
-    public Employee addEmployee(@RequestBody Employee employee)
-    {
-    	return employeeService.addEmployee(employee);
+
+ 
+    @PostMapping
+    public ResponseEntity<Employee> addEmployee(@RequestBody Employee employee) {
+        return ResponseEntity.ok(employeeService.addEmployee(employee));
     }
-    
-    @PutMapping("/{id}")
-    
-    	public Employee updateEmployee(@PathVariable Long id, @RequestBody Employee employee)
-    	{
-    		return employeeService.updateEmployee(id, employee);
+
+    @PostMapping("/dto")
+    public ResponseEntity<EmployeeDTO> addEmployeeDTO(@Valid @RequestBody EmployeeDTO employeedto)
+    {
+    	EmployeeDTO saved=employeeDataService.addEmployee(employeedto);
+    	return ResponseEntity.ok(saved);
     	
-    	}
-    
+    }
+   
+    @PutMapping("/{id}")
+    public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
+        return ResponseEntity.ok(employeeService.updateEmployee(id, employee));
+    }
+
+   
     @DeleteMapping("/{id}")
-    
-    	public void deleteEmployee(@PathVariable Long id)
-    	{
-    		 employeeService.deleteEmployee(id);
-    	}
+    public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
+        employeeService.deleteEmployee(id);
+        return ResponseEntity.noContent().build();
+    }
+
+   
     @GetMapping("/search")
-    
-    	public List<Employee> searchEmployeesByName(@RequestParam String keyword){
-    	 return employeeService.searchByName(keyword);
+    public ResponseEntity<List<Employee>> searchEmployeesByName(@RequestParam String keyword) {
+        return ResponseEntity.ok(employeeService.searchByName(keyword));
     }
-    @GetMapping("by-department")
-    public List<Employee> searchEmployeeByDept(@RequestParam String department)
-    {
-    	return employeeService.searchByDepartment(department);
-    }
-    
-    @GetMapping("/all")
-    public List <Employee> getAllEmployees1(){
-    	return employeeService.getAllEmployees();
-    }
-    
+
+ 
     @GetMapping("/department/{department}")
     public ResponseEntity<List<Employee>> getEmployeesByDepartment(@PathVariable String department) {
-        List<Employee> employees = employeeService.getEmployeeByDepartment(department);
-        return ResponseEntity.ok(employees);
+        return ResponseEntity.ok(employeeService.getEmployeeByDepartment(department));
+    }
+    
+    @GetMapping("/basic-info")
+    public ResponseEntity<List<EmployeeBasicInfo>> getBasicEmployeeInfo()
+    {
+        return  ResponseEntity.ok(employeeService.getAllBasicEmployeeInfo());
     }
 
+    
+   @GetMapping("/basic-info-paged")
+   public ResponseEntity<Page<EmployeeBasicInfo>> getBasicEmployeeInfoPaged(
+		   @RequestParam(defaultValue="0") int page,
+		   @RequestParam(defaultValue="5") int size)
+   {
+	   Pageable pageable =PageRequest.of(page,size);
+	   Page<EmployeeBasicInfo> pageResult= employeeService.getBasicEmployeeInfoPage(pageable);
+	   return ResponseEntity.ok(pageResult);
+   }
+		   
+    
+	    
+   
+    
 }
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

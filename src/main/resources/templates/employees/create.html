@@ -28,7 +28,7 @@
         <div class="mb-3">
             <label for="department" class="form-label">Department</label>
             <select th:field="*{department}" id="department" class="form-select">
-                <option value="" disabled selected>Select department</option>
+                <option value="" disabled >Select department</option>
                 <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}"></option>
             </select>
             <div class="text-danger" th:if="${#fields.hasErrors('department')}" th:errors="*{department}"></div>
@@ -41,7 +41,7 @@
         </div>
 
         <button type="submit" class="btn btn-success">Create</button>
-        <a href="view/employees/" class="btn btn-secondary ms-2">Cancel</a>
+        <a href="/view/employees/" class="btn btn-secondary ms-2">Cancel</a>
 
     </form>
 </div>

@@ -5,6 +5,7 @@ import com.example.project.service.EmployeeService;
 import com.example.project.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +18,19 @@ public class ViewController
 	private EmployeeService employeeService;
 	@Autowired
 	private DepartmentService departmentService; 
+	
+	 @ModelAttribute
+	    public void addCsrfToken(Model model, CsrfToken token) {
+	        model.addAttribute("_csrf", token);
+	    }
  
 	@GetMapping()
 	public String listEmployees(@RequestParam(defaultValue ="0") int page,
 	                           @RequestParam(defaultValue ="10")int size , Model model)
 	
 	{
+		
+
 		Page<Employee> employeePage= employeeService.getAllEmployees(PageRequest.of(page, size,Sort.by("id").ascending()));
 		model.addAttribute("employeePage",employeePage);
 		model.addAttribute("currentPage",page);
@@ -50,6 +58,26 @@ public class ViewController
 			return "redirect:/view/employees";
 			
 		}
+	
+	
+	@GetMapping("/login")
+	public String loginPage(
+	    @RequestParam(value = "error", required = false) String error,
+	    @RequestParam(value = "logout", required = false) String logout,
+	    Model model) {
+
+	    if (error != null) {
+	        model.addAttribute("errorMessage", "Invalid username or password");
+	    }
+
+	    if (logout != null) {
+	        model.addAttribute("message", "You have been logged out successfully");
+	    }
+
+	    return "employees/login"; 
+	}
+	
+	
 	@GetMapping("/edit/{id}")
 	
     public String showEditEmployeeForm(@PathVariable Long id, Model model)

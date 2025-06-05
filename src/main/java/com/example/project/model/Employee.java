@@ -22,7 +22,6 @@ public class Employee
 private  Long id;
 private  String name;
 private  String email;
-
 private String position;
 
 @ManyToOne
@@ -39,6 +38,7 @@ public Employee(String name,String email,Department department,String position)
 	this.name=name;
 	this.email=email;
 	this.department=department;
+	
 	this.position=position;
 }
 
@@ -62,6 +62,8 @@ public void setName(String name)
 	this.name=name;
 }
 
+
+
 public String getEmail()
 {
 	return email;
@@ -70,6 +72,8 @@ public void setEmail(String email)
 {
 	this.email=email;
 }
+
+
 
 public Department getDepartment()
 {
@@ -80,6 +84,7 @@ public void setDepartment(Department department)
 {
 	this.department=department;
 }
+
 
 public String getPosition()
 {

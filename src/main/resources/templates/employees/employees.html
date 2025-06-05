@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity">
 <head>
     <meta charset="UTF-8" />
     <title>Employee Directory</title>
@@ -25,11 +26,16 @@
 </head>
 <body>
 <div class="container mt-5">
-    <h2 class="text-center mb-4">Employee Directory</h2>
 
-    <!-- Add Button -->
-    <div class="mb-4 text-end">
-        <a href="#" th:href="@{/view/employees/add}" class="btn btn-success">Add Employee</a>
+  
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Employee Directory</h2>
+        <div>
+
+
+            <a href="#" th:href="@{/view/employees/add}" class="btn btn-success">Add Employee</a>
+        </div>
     </div>
 
     <!-- Employee List -->
