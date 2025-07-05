@@ -93,6 +93,15 @@
             <scope>provided</scope>
         </dependency>
 
+  <dependency>
+    <groupId>org.springdoc</groupId>
+    <artifactId>springdoc-openapi-ui</artifactId>
+    <version>1.6.15</version>
+</dependency>
+
+
+
+
         <!-- Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -100,6 +109,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    
 
     <build>
         <plugins>

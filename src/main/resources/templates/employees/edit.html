@@ -43,8 +43,12 @@
             <input type="text" th:field="*{position}" id="position" class="form-control"/>
             <div class="text-danger" th:if="${#fields.hasErrors('position')}" th:errors="*{position}"></div>
         </div>
-
+		<div sec:authorize="hasRole('ADMIN')">
         <button type="submit" class="btn btn-primary">Update</button>
+		<div sec:authorize="!hasRole('ADMIN')">
+		            <p class="text-danger">You do not have permission to update employee details.</p>
+		        </div>
+
         <a href="view/employees" class="btn btn-secondary ms-2">Cancel</a>
 
     </form>

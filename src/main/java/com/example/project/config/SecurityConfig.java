@@ -1,22 +1,25 @@
 package com.example.project.config;
 
+import com.example.project.auth.service.CustomUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
-import javax.sql.DataSource;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
-    @Bean
-    public UserDetailsService userDetailsService(DataSource dataSource) {
-        return new JdbcUserDetailsManager(dataSource);
-    }
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -24,30 +27,52 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+            throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(authorize -> authorize
+            .csrf()
+                .ignoringAntMatchers("/h2-console/**") // ✅ allow H2 console
+            .and()
+            .authorizeRequests()
+            .antMatchers(
+                   
+                    "/v3/api-docs/**",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html",
+                    "/swagger-resources/**",
+                    "/webjars/**",
+                    
+                   
+                    "/view/employees/login",
+                    "/css/**",
+                    "/js/**",
+                    "/h2-console/**"
+                ).permitAll()
                 .antMatchers("/view/employees/login", "/css/**", "/js/**", "/h2-console/**").permitAll()
+                .antMatchers("/view/employees/add", "/view/employees/edit/**", "/view/employees/delete/**").hasRole("ADMIN")
+                .antMatchers("/view/employees/**").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/api/employees/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
+            .and()
+            .formLogin()
                 .loginPage("/view/employees/login")
                 .defaultSuccessUrl("/view/employees", true)
                 .loginProcessingUrl("/login")
                 .failureUrl("/view/employees/login?error=true")
                 .permitAll()
-            )
-            .logout(logout -> logout
+            .and()
+            .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/view/employees/login?logout=true")
                 .permitAll()
-            )
-            .csrf(csrf -> csrf
-                .ignoringAntMatchers("/h2-console/**")
-            )
-            .headers(headers -> headers
-                .frameOptions(frame -> frame.sameOrigin())
-            );
+            .and()
+            .headers()
+                .frameOptions().sameOrigin(); // ✅ required for H2 console to work
 
         return http.build();
     }
